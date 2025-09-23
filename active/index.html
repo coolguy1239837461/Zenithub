@@ -74,24 +74,25 @@
     const overlay = document.getElementById("menu-overlay");
     optionsBtn.addEventListener("click", () => overlay.classList.toggle("active"));
 
-    // Proxy search handling
+    // Search via UV Static 2.0 proxy
     const urlForm = document.getElementById("url-form");
     const urlInput = document.getElementById("url-input");
     const mainContent = document.getElementById("main-content");
 
     urlForm.addEventListener("submit", (e) => {
       e.preventDefault();
-      const query = encodeURIComponent(urlInput.value);
+      const query = urlInput.value.trim();
+      if (!query) return;
 
-      // Messy URL handled internally
-      const proxyUrl = `https://airfreshener.netlify.app/active/uv/service/${query}?v=${Math.random().toString(36).slice(2)}`;
-
-      // Display in iframe
-      const iframe = document.createElement("iframe");
-      iframe.src = proxyUrl;
-
-      mainContent.innerHTML = "";
-      mainContent.appendChild(iframe);
+      // Call the UV Static search function (internal messy URL handling)
+      if (window.uv && typeof window.uv.open === "function") {
+        // `uv.open(query)` usually handles dynamic messy URLs internally
+        // Replace `uv.open` with the exact function used in uv.bundle.js for search
+        window.uv.open(query, mainContent);
+      } else {
+        console.error("UV Static 2.0 function not found!");
+        mainContent.innerHTML = "<p style='color:red;'>Error: Proxy function missing.</p>";
+      }
     });
   </script>
 </body>
